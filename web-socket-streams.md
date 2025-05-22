@@ -2,15 +2,15 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-  - [General WSS information](#general-wss-information)
-  - [WebSocket Limits](#websocket-limits)
-  - [Live Subscribing/Unsubscribing to streams](#live-subscribingunsubscribing-to-streams)
-    - [Subscribe to a stream](#subscribe-to-a-stream)
-    - [Unsubscribe to a stream](#unsubscribe-to-a-stream)
-    - [Listing Subscriptions](#listing-subscriptions)
-    - [Setting Properties](#setting-properties)
-    - [Retrieving Properties](#retrieving-properties)
-    - [Error Messages](#error-messages)
+- [General WSS information](#general-wss-information)
+- [WebSocket Limits](#websocket-limits)
+- [Live Subscribing/Unsubscribing to streams](#live-subscribingunsubscribing-to-streams)
+  - [Subscribe to a stream](#subscribe-to-a-stream)
+  - [Unsubscribe to a stream](#unsubscribe-to-a-stream)
+  - [Listing Subscriptions](#listing-subscriptions)
+  - [Setting Properties](#setting-properties)
+  - [Retrieving Properties](#retrieving-properties)
+  - [Error Messages](#error-messages)
 - [Detailed Stream information](#detailed-stream-information)
   - [Aggregate Trade Streams](#aggregate-trade-streams)
   - [Trade Streams](#trade-streams)
@@ -33,41 +33,45 @@
 # WebSocket Streams for Binance (2025-01-28)
 
 ## General WSS information
+
 * The base endpoint is: **wss://stream.binance.com:9443** or **wss://stream.binance.com:443**.
-* Streams can be accessed either in a single raw stream or in a combined stream.
-* Raw streams are accessed at **/ws/\<streamName\>**
-* Combined streams are accessed at **/stream?streams=\<streamName1\>/\<streamName2\>/\<streamName3\>**
-* Combined stream events are wrapped as follows: **{"stream":"\<streamName\>","data":\<rawPayload\>}**
-* All symbols for streams are **lowercase**
-* A single connection to **stream.binance.com** is only valid for 24 hours; expect to be disconnected at the 24 hour mark
-* The WebSocket server will send a `ping frame` every 20 seconds.
-  * If the WebSocket server does not receive a `pong frame` back from the connection within a minute the connection will be disconnected.
-  * When you receive a ping, you must send a pong with a copy of ping's payload as soon as possible.
-  * Unsolicited `pong frames` are allowed, but will not prevent disconnection. **It is recommended that the payload for these pong frames are empty.**
-* The base endpoint **wss://data-stream.binance.vision** can be subscribed to receive **only** market data messages. <br> User data stream is **NOT** available from this URL.
-* All time and timestamp related fields are **milliseconds by default**. To receive the information in microseconds, please add the parameter `timeUnit=MICROSECOND or timeUnit=microsecond` in the URL.
-  * For example: `/stream?streams=btcusdt@trade&timeUnit=MICROSECOND`
+- Streams can be accessed either in a single raw stream or in a combined stream.
+- Raw streams are accessed at **/ws/\<streamName\>**
+- Combined streams are accessed at **/stream?streams=\<streamName1\>/\<streamName2\>/\<streamName3\>**
+- Combined stream events are wrapped as follows: **{"stream":"\<streamName\>","data":\<rawPayload\>}**
+- All symbols for streams are **lowercase**
+- A single connection to **stream.binance.com** is only valid for 24 hours; expect to be disconnected at the 24 hour mark
+- The WebSocket server will send a `ping frame` every 20 seconds.
+  - If the WebSocket server does not receive a `pong frame` back from the connection within a minute the connection will be disconnected.
+  - When you receive a ping, you must send a pong with a copy of ping's payload as soon as possible.
+  - Unsolicited `pong frames` are allowed, but will not prevent disconnection. **It is recommended that the payload for these pong frames are empty.**
+- The base endpoint **wss://data-stream.binance.vision** can be subscribed to receive **only** market data messages. <br> User data stream is **NOT** available from this URL.
+- All time and timestamp related fields are **milliseconds by default**. To receive the information in microseconds, please add the parameter `timeUnit=MICROSECOND or timeUnit=microsecond` in the URL.
+  - For example: `/stream?streams=btcusdt@trade&timeUnit=MICROSECOND`
 
 ## WebSocket Limits
+
 * WebSocket connections have a limit of 5 incoming messages per second. A message is considered:
-    * A PING frame
-    * A PONG frame
-    * A JSON controlled message (e.g. subscribe, unsubscribe)
-* A connection that goes beyond the limit will be disconnected; IPs that are repeatedly disconnected may be banned.
-* A single connection can listen to a maximum of 1024 streams.
-* There is a limit of **300 connections per attempt every 5 minutes per IP**.
+  - A PING frame
+  - A PONG frame
+  - A JSON controlled message (e.g. subscribe, unsubscribe)
+- A connection that goes beyond the limit will be disconnected; IPs that are repeatedly disconnected may be banned.
+- A single connection can listen to a maximum of 1024 streams.
+- There is a limit of **300 connections per attempt every 5 minutes per IP**.
 
 ## Live Subscribing/Unsubscribing to streams
 
-* The following data can be sent through the WebSocket instance in order to subscribe/unsubscribe from streams. Examples can be seen below.
-* The `id` is used as an identifier to uniquely identify the messages going back and forth. The following formats are accepted:
-  * 64-bit signed integer
-  * alphanumeric strings; max length 36
-  * `null`
-* In the response, if the `result` received is `null` this means the request sent was a success for non-query requests (e.g. Subscribing/Unsubscribing).
+- The following data can be sent through the WebSocket instance in order to subscribe/unsubscribe from streams. Examples can be seen below.
+- The `id` is used as an identifier to uniquely identify the messages going back and forth. The following formats are accepted:
+  - 64-bit signed integer
+  - alphanumeric strings; max length 36
+  - `null`
+- In the response, if the `result` received is `null` this means the request sent was a success for non-query requests (e.g. Subscribing/Unsubscribing).
 
 ### Subscribe to a stream
+
 * Request
+
   ```javascript
   {
     "method": "SUBSCRIBE",
@@ -79,7 +83,8 @@
   }
   ```
 
-* Response
+- Response
+
   ```javascript
   {
     "result": null,
@@ -88,7 +93,9 @@
   ```
 
 ### Unsubscribe to a stream
+
 * Request
+
   ```javascript
   {
     "method": "UNSUBSCRIBE",
@@ -99,7 +106,8 @@
   }
   ```
 
-* Response
+- Response
+
   ```javascript
   {
     "result": null,
@@ -107,9 +115,10 @@
   }
   ```
 
-
 ### Listing Subscriptions
+
 * Request
+
   ```javascript
   {
     "method": "LIST_SUBSCRIPTIONS",
@@ -117,7 +126,8 @@
   }
   ```
 
-* Response
+- Response
+
   ```javascript
   {
     "result": [
@@ -127,12 +137,13 @@
   }
   ```
 
-
 ### Setting Properties
+
 Currently, the only property that can be set is whether `combined` stream payloads are enabled or not.
 The combined property is set to `false` when connecting using `/ws/` ("raw streams") and `true` when connecting using `/stream/`.
 
-* Request
+- Request
+
   ```javascript
   {
     "method": "SET_PROPERTY",
@@ -144,7 +155,8 @@ The combined property is set to `false` when connecting using `/ws/` ("raw strea
   }
   ```
 
-* Response
+- Response
+
   ```javascript
   {
     "result": null,
@@ -153,7 +165,9 @@ The combined property is set to `false` when connecting using `/ws/` ("raw strea
   ```
 
 ### Retrieving Properties
+
 * Request
+
   ```javascript
   {
     "method": "GET_PROPERTY",
@@ -164,7 +178,8 @@ The combined property is set to `false` when connecting using `/ws/` ("raw strea
   }
   ```
 
-* Response
+- Response
+
   ```javascript
   {
     "result": true, // Indicates that combined is set to true.
@@ -186,9 +201,10 @@ Error Message | Description
 {"code": 2, "msg": "Invalid request: missing field `method` at line 1 column 73"} | `method` was not provided in the data
 {"code":3,"msg":"Invalid JSON: expected value at line %s column %s"} | JSON data sent has incorrect syntax.
 
-
 # Detailed Stream information
+
 ## Aggregate Trade Streams
+
 The Aggregate Trade Streams push trade information that is aggregated for a single taker order.
 
 **Stream Name:** \<symbol\>@aggTrade
@@ -196,6 +212,7 @@ The Aggregate Trade Streams push trade information that is aggregated for a sing
 **Update Speed:** Real-time
 
 **Payload:**
+
 ```javascript
 {
   "e": "aggTrade",    // Event type
@@ -213,6 +230,7 @@ The Aggregate Trade Streams push trade information that is aggregated for a sing
 ```
 
 ## Trade Streams
+
 The Trade Streams push raw trade information; each trade has a unique buyer and seller.
 
 **Stream Name:** \<symbol\>@trade
@@ -220,6 +238,7 @@ The Trade Streams push raw trade information; each trade has a unique buyer and 
 **Update Speed:** Real-time
 
 **Payload:**
+
 ```javascript
 {
   "e": "trade",       // Event type
@@ -235,6 +254,7 @@ The Trade Streams push raw trade information; each trade has a unique buyer and 
 ```
 
 ## Kline/Candlestick Streams for UTC
+
 The Kline/Candlestick Stream push updates to the current klines/candlestick every second in `UTC+0` timezone
 
 <a id="kline-intervals"></a>
@@ -242,29 +262,29 @@ The Kline/Candlestick Stream push updates to the current klines/candlestick ever
 
 s-> seconds; m -> minutes; h -> hours; d -> days; w -> weeks; M -> months
 
-* 1s
-* 1m
-* 3m
-* 5m
-* 15m
-* 30m
-* 1h
-* 2h
-* 4h
-* 6h
-* 8h
-* 12h
-* 1d
-* 3d
-* 1w
-* 1M
-
+- 1s
+- 1m
+- 3m
+- 5m
+- 15m
+- 30m
+- 1h
+- 2h
+- 4h
+- 6h
+- 8h
+- 12h
+- 1d
+- 3d
+- 1w
+- 1M
 
 **Stream Name:** \<symbol\>@kline_\<interval\>
 
 **Update Speed:** 1000ms for `1s`, 2000ms for the other intervals
 
 **Payload:**
+
 ```javascript
 {
   "e": "kline",         // Event type
@@ -293,6 +313,7 @@ s-> seconds; m -> minutes; h -> hours; d -> days; w -> weeks; M -> months
 ```
 
 ## Kline/Candlestick Streams with timezone offset
+
 The Kline/Candlestick Stream push updates to the current klines/candlestick every second in `UTC+8` timezone
 
 **Kline/Candlestick chart intervals:**
@@ -301,14 +322,15 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 
 **UTC+8 timezone offset:**
 
-* Kline intervals open and close in the `UTC+8` timezone. For example the `1d` klines will open at the beginning of the `UTC+8` day, and close at the end of the `UTC+8` day.
-* Note that `E` (event time), `t` (start time) and `T` (close time) in the payload are Unix timestamps, which are always interpreted in UTC.
+- Kline intervals open and close in the `UTC+8` timezone. For example the `1d` klines will open at the beginning of the `UTC+8` day, and close at the end of the `UTC+8` day.
+- Note that `E` (event time), `t` (start time) and `T` (close time) in the payload are Unix timestamps, which are always interpreted in UTC.
 
 **Stream Name:** \<symbol\>@kline_\<interval\>@+08:00
 
 **Update Speed:** 1000ms for `1s`, 2000ms for the other intervals
 
 **Payload:**
+
 ```javascript
 {
   "e": "kline",         // Event type
@@ -337,6 +359,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 ```
 
 ## Individual Symbol Mini Ticker Stream
+
 24hr rolling window mini-ticker statistics. These are NOT the statistics of the UTC day, but a 24hr rolling window for the previous 24hrs.
 
 **Stream Name:** \<symbol\>@miniTicker
@@ -344,6 +367,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 **Update Speed:** 1000ms
 
 **Payload:**
+
 ```javascript
   {
     "e": "24hrMiniTicker",  // Event type
@@ -359,6 +383,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 ```
 
 ## All Market Mini Tickers Stream
+
 24hr rolling window mini-ticker statistics for all symbols that changed in an array. These are NOT the statistics of the UTC day, but a 24hr rolling window for the previous 24hrs. Note that only tickers that have changed will be present in the array.
 
 **Stream Name:** !miniTicker@arr
@@ -366,6 +391,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 **Update Speed:** 1000ms
 
 **Payload:**
+
 ```javascript
 [
   {
@@ -375,6 +401,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 ```
 
 ## Individual Symbol Ticker Streams
+
 24hr rolling window ticker statistics for a single symbol. These are NOT the statistics of the UTC day, but a 24hr rolling window for the previous 24hrs.
 
 **Stream Name:** \<symbol\>@ticker
@@ -382,6 +409,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 **Update Speed:** 1000ms
 
 **Payload:**
+
 ```javascript
 {
   "e": "24hrTicker",  // Event type
@@ -411,6 +439,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 ```
 
 ## All Market Tickers Stream
+
 24hr rolling window ticker statistics for all symbols that changed in an array. These are NOT the statistics of the UTC day, but a 24hr rolling window for the previous 24hrs. Note that only tickers that have changed will be present in the array.
 
 **Stream Name:** !ticker@arr
@@ -418,6 +447,7 @@ Supported intervals: See [`Kline/Candlestick chart intervals`](#kline-intervals)
 **Update Speed:** 1000ms
 
 **Payload:**
+
 ```javascript
 [
   {
@@ -464,7 +494,6 @@ As such, the effective window might be up to 59999ms wider than \<window_size\>.
 }
 ```
 
-
 ## All Market Rolling Window Statistics Streams
 
 Rolling window ticker statistics for all market symbols, computed over multiple windows.
@@ -477,6 +506,7 @@ Note that only tickers that have changed will be present in the array.
 **Update Speed:** 1000ms
 
 **Payload:**
+
 ```javascript
 [
   {
@@ -486,8 +516,8 @@ Note that only tickers that have changed will be present in the array.
 ]
 ```
 
-
 ## Individual Symbol Book Ticker Streams
+
 Pushes any update to the best bid or ask's price or quantity in real-time for a specified symbol.
 Multiple `<symbol>@bookTicker` streams can be subscribed to over one connection.
 
@@ -496,6 +526,7 @@ Multiple `<symbol>@bookTicker` streams can be subscribed to over one connection.
 **Update Speed:** Real-time
 
 **Payload:**
+
 ```javascript
 {
   "u":400900217,     // order book updateId
@@ -529,6 +560,7 @@ Average price streams push changes in the average price over a fixed time interv
 ```
 
 ## Partial Book Depth Streams
+
 Top **\<levels\>** bids and asks, pushed every second. Valid **\<levels\>** are 5, 10, or 20.
 
 **Stream Names:** \<symbol\>@depth\<levels\> OR \<symbol\>@depth\<levels\>@100ms
@@ -536,6 +568,7 @@ Top **\<levels\>** bids and asks, pushed every second. Valid **\<levels\>** are 
 **Update Speed:** 1000ms or 100ms
 
 **Payload:**
+
 ```javascript
 {
   "lastUpdateId": 160,  // Last update ID
@@ -555,6 +588,7 @@ Top **\<levels\>** bids and asks, pushed every second. Valid **\<levels\>** are 
 ```
 
 ## Diff. Depth Stream
+
 Order book price and quantity depth updates used to locally manage an order book.
 
 **Stream Name:** \<symbol\>@depth OR \<symbol\>@depth@100ms
@@ -562,6 +596,7 @@ Order book price and quantity depth updates used to locally manage an order book
 **Update Speed:** 1000ms or 100ms
 
 **Payload:**
+
 ```javascript
 {
   "e": "depthUpdate", // Event type
@@ -585,6 +620,7 @@ Order book price and quantity depth updates used to locally manage an order book
 ```
 
 ## How to manage a local order book correctly
+
 1. Open a WebSocket connection to `wss://stream.binance.com:9443/ws/bnbbtc@depth`.
 1. Buffer the events received from the stream. Note the `U` of the first event you received.
 1. Get a depth snapshot from `https://api.binance.com/api/v3/depth?symbol=BNBBTC&limit=5000`.
@@ -594,11 +630,12 @@ Order book price and quantity depth updates used to locally manage an order book
 1. Apply the update procedure below to all buffered events, and then to all subsequent events received.
 
 To apply an event to your local order book, follow this update procedure:
+
 1. If the event `u` (last update ID) is < the update ID of your local order book, ignore the event.
 1. If the event `U` (first update ID) is > the update ID of your local order book, something went wrong. Discard your local order book and restart the process from the beginning.
 1. For each price level in bids (`b`) and asks (`a`), set the new quantity in the order book:
-    * If the price level does not exist in the order book, insert it with new quantity.
-    * If the quantity is zero, remove the price level from the order book.
+    - If the price level does not exist in the order book, insert it with new quantity.
+    - If the quantity is zero, remove the price level from the order book.
 1. Set the order book update ID to the last update ID (`u`) in the processed event.
 
 > [!NOTE]
